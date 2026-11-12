@@ -28,11 +28,11 @@ function App() {
       if (text.includes("終了")) {
         setResult("終了");
       }
-      if (text.includes("+")) {
+      if (text.includes("＋")) {
         setResult("プラス");
         setCount((prev) => prev + 1);
       }
-      if (text.includes("-")) {
+      if (text.includes("ー")) {
         setResult("マイナス");
         setCount((prev) => prev - 1);
       }
