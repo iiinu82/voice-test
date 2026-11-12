@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function App() {
   const [result, setResult] = useState("");
-  const [count, setCount] = useState("1");
+  const [count, setCount] = useState(1);
 
   const startRecognition = () => {
     const SpeechRecognition =
