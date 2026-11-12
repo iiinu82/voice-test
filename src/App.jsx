@@ -24,6 +24,9 @@ function App() {
       if (text.includes("開始")) {
         setResult("開始");
       }
+      if (text.includes("おはよう")) {
+        setResult("おはようございます！！");
+      }
 
       if (text.includes("終了")) {
         setResult("終了");
