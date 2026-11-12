@@ -2,6 +2,7 @@ import { useState } from "react";
 
 function App() {
   const [result, setResult] = useState("");
+  const [count, setCount] = useState("1");
 
   const startRecognition = () => {
     const SpeechRecognition =
@@ -27,6 +28,14 @@ function App() {
       if (text.includes("終了")) {
         setResult("終了");
       }
+      if (text.includes("プラス")) {
+        setResult("プラス");
+        setCount((prev) => prev + 1);
+      }
+      if (text.includes("マイナス")) {
+        setResult("マイナス");
+        setCount((prev) => prev - 1);
+      }
     };
 
     recognition.start();
@@ -39,6 +48,7 @@ function App() {
       <button onClick={startRecognition}>集音を始める</button>
 
       <h2>{result}</h2>
+      <div>{count}</div>
     </div>
   );
 }
