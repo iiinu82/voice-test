@@ -19,7 +19,7 @@ function App() {
     recognition.interimResults = true;
     recognition.onresult = (event) => {
       const text = event.results[event.results.length - 1][0].transcript;
-
+      setResult(text);
       if (text.includes("開始")) {
         setResult("開始");
       }
