@@ -4,6 +4,7 @@ function App() {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(1);
   const lastCommand = useRef("");
+  const commandProcessed = useRef(false);
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -21,28 +22,32 @@ function App() {
     recognition.onresult = (event) => {
       const text = event.results[event.results.length - 1][0].transcript;
 
-      if (text === lastCommand.current) {
-        return;
-      }
+      // まだ今回の発声を処理していなければ実行
+      if (!commandProcessed.current) {
+        if (text.includes("開始")) {
+          setResult("開始");
+        }
+        if (text.includes("おはよう")) {
+          setResult("おはようございます！！");
+        }
 
-      lastCommand.current = text;
-      if (text.includes("開始")) {
-        setResult("開始");
-      }
-      if (text.includes("おはよう")) {
-        setResult("おはようございます！！");
-      }
-
-      if (text.includes("終了")) {
-        setResult("終了");
-      }
-      if (text.includes("足して")) {
-        setResult("足して");
-        setCount((prev) => prev + 1);
-      }
-      if (text.includes("減らして")) {
-        setResult("減らして");
-        setCount((prev) => prev - 1);
+        if (text.includes("終了")) {
+          setResult("終了");
+        }
+        if (text.includes("足して")) {
+          setResult("足して");
+          setCount((prev) => prev + 1);
+          commandProcessed.current = true;
+        }
+        if (text.includes("減らして")) {
+          setResult("減らして");
+          setCount((prev) => prev - 1);
+          commandProcessed.current = true;
+        }
+      } // 音声認識が「この発声は終了した」と判断したら、
+      // 次の発声を受け付けられる状態に戻す
+      if (event.results[event.results.length - 1].isFinal) {
+        commandProcessed.current = false;
       }
     };
 
