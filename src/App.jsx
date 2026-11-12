@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 function App() {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(1);
-
+  const lastCommand = useRef("");
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -20,7 +20,12 @@ function App() {
     recognition.interimResults = true;
     recognition.onresult = (event) => {
       const text = event.results[event.results.length - 1][0].transcript;
-      setResult(text);
+
+      if (text === lastCommand.current) {
+        return;
+      }
+
+      lastCommand.current = text;
       if (text.includes("開始")) {
         setResult("開始");
       }
