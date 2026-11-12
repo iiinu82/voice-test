@@ -1,10 +1,43 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 function App() {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(1);
-  const lastCommand = useRef("");
   const commandProcessed = useRef(false);
+
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+
+      const microphone = audioContext.createMediaStreamSource(stream);
+      microphone.connect(analyser);
+
+      const dataArray = new Uint8Array(analyser.fftSize);
+
+      const detectSound = () => {
+        analyser.getByteTimeDomainData(dataArray);
+
+        let max = 0;
+
+        for (let i = 0; i < dataArray.length; i++) {
+          const value = Math.abs(dataArray[i] - 128);
+
+          if (value > max) {
+            max = value;
+          }
+        }
+
+        if (max > 50) {
+          setCount((prev) => prev + 1);
+        }
+
+        requestAnimationFrame(detectSound);
+      };
+
+      detectSound();
+    });
+  }, []);
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
