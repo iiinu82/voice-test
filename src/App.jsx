@@ -28,12 +28,12 @@ function App() {
       if (text.includes("終了")) {
         setResult("終了");
       }
-      if (text.includes("＋")) {
-        setResult("プラス");
+      if (text.includes("足して")) {
+        setResult("足して");
         setCount((prev) => prev + 1);
       }
-      if (text.includes("ー")) {
-        setResult("マイナス");
+      if (text.includes("へらして || 減らして")) {
+        setResult("減らして");
         setCount((prev) => prev - 1);
       }
     };
