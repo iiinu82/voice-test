@@ -32,7 +32,7 @@ function App() {
         setResult("足して");
         setCount((prev) => prev + 1);
       }
-      if (text.includes("へらして || 減らして")) {
+      if (text.includes("減らして")) {
         setResult("減らして");
         setCount((prev) => prev - 1);
       }
