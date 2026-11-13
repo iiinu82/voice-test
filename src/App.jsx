@@ -4,6 +4,7 @@ function App() {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(1);
   const commandProcessed = useRef(false);
+  const soundProcessed = useRef(false);
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
@@ -28,8 +29,13 @@ function App() {
           }
         }
 
-        if (max > 50) {
+        if (max > 50 && !soundProcessed.current) {
           setCount((prev) => prev + 1);
+          soundProcessed.current = true;
+        }
+
+        if (max <= 50) {
+          soundProcessed.current = false;
         }
 
         requestAnimationFrame(detectSound);
@@ -38,6 +44,7 @@ function App() {
       detectSound();
     });
   }, []);
+
   const startRecognition = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
