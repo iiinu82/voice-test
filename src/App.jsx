@@ -1,11 +1,20 @@
 import { useState, useRef, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [result, setResult] = useState("");
-  const [count, setCount] = useState(1);
-  const commandProcessed = useRef(false);
-  const soundProcessed = useRef(false);
+  const [randomNumber, setRandomNumber] = useState(null);
 
+  // 音の二重反応防止
+  const soundProcessed = useRef(false);
+  const lastSoundTime = useRef(0);
+
+  // 1〜9のランダムな数字を作る
+  const createRandomNumber = () => {
+    const number = Math.floor(Math.random() * 9) + 1;
+    setRandomNumber(number);
+  };
+
+  // 大きな音を検出
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
       const audioContext = new AudioContext();
@@ -28,16 +37,22 @@ function App() {
             max = value;
           }
         }
+        const now = Date.now();
+        // 大きな音を1回検出
+        if (
+          max > 50 &&
+          !soundProcessed.current &&
+          now - lastSoundTime.current > 500
+        ) {
+          createRandomNumber();
 
-        if (max > 50 && !soundProcessed.current) {
-          setCount((prev) => prev + 1);
           soundProcessed.current = true;
+          lastSoundTime.current = now;
         }
 
         if (max <= 50) {
           soundProcessed.current = false;
         }
-
         requestAnimationFrame(detectSound);
       };
 
@@ -45,63 +60,25 @@ function App() {
     });
   }, []);
 
-  const startRecognition = () => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert("このブラウザは音声認識に対応していません");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = "ja-JP";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.onresult = (event) => {
-      const text = event.results[event.results.length - 1][0].transcript;
-
-      // まだ今回の発声を処理していなければ実行
-      if (!commandProcessed.current) {
-        if (text.includes("開始")) {
-          setResult("開始");
-        }
-        if (text.includes("おはよう")) {
-          setResult("おはようございます！！");
-        }
-
-        if (text.includes("終了")) {
-          setResult("終了");
-        }
-        if (text.includes("足して")) {
-          setResult("足して");
-          setCount((prev) => prev + 1);
-          commandProcessed.current = true;
-        }
-        if (text.includes("減らして")) {
-          setResult("減らして");
-          setCount((prev) => prev - 1);
-          commandProcessed.current = true;
-        }
-      } // 音声認識が「この発声は終了した」と判断したら、
-      // 次の発声を受け付けられる状態に戻す
-      if (event.results[event.results.length - 1].isFinal) {
-        commandProcessed.current = false;
-      }
-    };
-
-    recognition.start();
-  };
-
   return (
-    <div>
-      <h1>音声認識テスト</h1>
+    <div className="app">
+      <h1>3×3 音スイッチテスト</h1>
 
-      <button onClick={startRecognition}>集音を始める</button>
+      <button onClick={createRandomNumber}>次</button>
 
-      <h2>{result}</h2>
-      <div>{count}</div>
+      <div className="grid">
+        {Array.from({ length: 9 }, (_, index) => {
+          const number = index + 1;
+
+          return (
+            <div key={number} className="cell">
+              <span>{number}</span>
+
+              {randomNumber === number && <span className="circle">○</span>}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
