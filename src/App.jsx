@@ -231,6 +231,7 @@ function App() {
                 <input
                   type="number"
                   min="1"
+                  max="5"
                   value={rows}
                   onChange={(e) => setRows(Number(e.target.value))}
                 />
@@ -245,6 +246,7 @@ function App() {
                 <input
                   type="number"
                   min="1"
+                  max="5"
                   value={columns}
                   onChange={(e) => setColumns(Number(e.target.value))}
                 />
@@ -318,7 +320,7 @@ function App() {
 
           return (
             <div key={number} className="cell">
-              {randomNumber === number && <span className="circle">○</span>}
+              {randomNumber === number && <span className="circle"></span>}
             </div>
           );
         })}
