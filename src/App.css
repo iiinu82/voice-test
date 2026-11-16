@@ -279,3 +279,10 @@ button {
 
   font-size: 18px;
 }
+
+.settingItem input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  accent-color: #43a047;
+  cursor: pointer;
+}

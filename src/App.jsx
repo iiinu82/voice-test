@@ -11,6 +11,10 @@ function App() {
     return localStorage.getItem("mode") || "count";
   });
 
+  const [hasCountdown, setHasCountdown] = useState(() => {
+    return localStorage.getItem("hasCountdown") || "true";
+  });
+
   const [targetCount, setTargetCount] = useState(() => {
     return Number(localStorage.getItem("targetCount")) || 10;
   });
@@ -42,8 +46,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   // カウントダウン表示
   const [countdown, setCountdown] = useState(null);
-  // 秒読み
-  const [hasCountdown, setHasCountdown] = useState(true);
+
   // 設定モーダル開閉
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -59,12 +62,21 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("mode", mode);
+    localStorage.setItem("hasCountdown", hasCountdown);
     localStorage.setItem("targetCount", targetCount);
     localStorage.setItem("targetTime", targetTime);
     localStorage.setItem("intervalTime", intervalTime);
     localStorage.setItem("rows", rows);
     localStorage.setItem("columns", columns);
-  }, [mode, targetCount, targetTime, intervalTime, rows, columns]);
+  }, [
+    mode,
+    hasCountdown,
+    targetCount,
+    targetTime,
+    intervalTime,
+    rows,
+    columns,
+  ]);
 
   // =========================
   // ランダムなマスを作る
@@ -131,7 +143,7 @@ function App() {
     if (isRunning || countdown !== null) return;
 
     // 秒読み無し
-    if (!setHasCountdown) {
+    if (!hasCountdown) {
       startGameNow();
       return;
     }
@@ -218,9 +230,9 @@ function App() {
                 <label>秒読み</label>
                 <input
                   type="checkbox"
-                  checked={setHasCountdown}
+                  checked={hasCountdown}
                   onChange={(e) => setHasCountdown(e.target.checked)}
-                />{" "}
+                />
               </div>
 
               {/* 回数 */}
