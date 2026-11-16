@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
+import logo from "/logo.png";
 
 function App() {
   // =========================
@@ -145,7 +146,7 @@ function App() {
     <div className="app">
       {/* タイトル */}
       <header className="header">
-        <h1>ランダムトレーニング</h1>
+        <img className="logo" src={logo} alt="ランダムトレーニング" />
       </header>
 
       {/* =========================
