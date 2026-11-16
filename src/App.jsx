@@ -181,14 +181,28 @@ function App() {
               {mode === "count" && (
                 <div className="settingItem">
                   <label>回数</label>
-
                   <input
                     type="number"
                     min="1"
                     value={targetCount}
                     onChange={(e) => setTargetCount(Number(e.target.value))}
-                  />
-
+                  />{" "}
+                  <button
+                    type="button"
+                    className="minusButton"
+                    onClick={() =>
+                      setTargetCount((prev) => Math.max(1, prev - 1))
+                    }
+                  >
+                    −
+                  </button>
+                  <button
+                    type="button"
+                    className="plusButton"
+                    onClick={() => setTargetCount((prev) => prev + 1)}
+                  >
+                    ＋
+                  </button>
                   <span>回</span>
                 </div>
               )}
@@ -197,14 +211,28 @@ function App() {
               {mode === "timer" && (
                 <div className="settingItem">
                   <label>時間</label>
-
                   <input
                     type="number"
                     min="1"
                     value={targetTime}
                     onChange={(e) => setTargetTime(Number(e.target.value))}
-                  />
-
+                  />{" "}
+                  <button
+                    type="button"
+                    className="minusButton"
+                    onClick={() =>
+                      setTargetTime((prev) => Math.max(1, prev - 1))
+                    }
+                  >
+                    −
+                  </button>
+                  <button
+                    type="button"
+                    className="plusButton"
+                    onClick={() => setTargetTime((prev) => prev + 1)}
+                  >
+                    ＋
+                  </button>
                   <span>秒</span>
                 </div>
               )}
@@ -220,6 +248,28 @@ function App() {
                   value={intervalTime}
                   onChange={(e) => setIntervalTime(Number(e.target.value))}
                 />
+                <button
+                  type="button"
+                  className="minusButton"
+                  onClick={() =>
+                    setIntervalTime((prev) =>
+                      Math.max(0.1, Math.round((prev - 0.1) * 10) / 10),
+                    )
+                  }
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  className="plusButton"
+                  onClick={() =>
+                    setIntervalTime(
+                      (prev) => Math.round((prev + 0.1) * 10) / 10,
+                    )
+                  }
+                >
+                  ＋
+                </button>
 
                 <span>秒</span>
               </div>
@@ -235,22 +285,47 @@ function App() {
                   value={rows}
                   onChange={(e) => setRows(Number(e.target.value))}
                 />
-
+                <button
+                  type="button"
+                  className="minusButton"
+                  onClick={() => setRows((prev) => Math.max(1, prev - 1))}
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  className="plusButton"
+                  onClick={() => setRows((prev) => Math.min(5, prev + 1))}
+                >
+                  ＋
+                </button>
                 <span>マス</span>
               </div>
 
               {/* 横 */}
               <div className="settingItem">
                 <label>横</label>
-
                 <input
                   type="number"
                   min="1"
                   max="5"
                   value={columns}
                   onChange={(e) => setColumns(Number(e.target.value))}
-                />
-
+                />{" "}
+                <button
+                  type="button"
+                  className="minusButton"
+                  onClick={() => setColumns((prev) => Math.max(1, prev - 1))}
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  className="plusButton"
+                  onClick={() => setColumns((prev) => Math.min(5, prev + 1))}
+                >
+                  ＋
+                </button>
                 <span>マス</span>
               </div>
             </div>
@@ -294,13 +369,13 @@ function App() {
             STOP
           </button>
         )}
-
+        {/* 歯車ボタン */}
         <button
           className="settingsButton"
           onClick={() => setIsSettingsOpen(true)}
           disabled={isRunning}
         >
-          ⚙
+          <i className="fa-solid fa-gear"></i>
         </button>
       </div>
 

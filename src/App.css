@@ -27,6 +27,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 5px;
   margin-bottom: 20px;
 }
 
@@ -49,6 +50,7 @@ button {
   justify-content: center;
   gap: 12px;
   margin-bottom: 20px;
+  position: relative;
 }
 
 /* スタート・ストップ */
@@ -84,6 +86,9 @@ button {
 
 /* 歯車 */
 .settingsButton {
+  position: absolute;
+  top: 0;
+  right: 5px;
   width: 54px;
   height: 54px;
 
@@ -145,7 +150,7 @@ button {
 
   padding: 20px;
 
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.3);
 
   z-index: 1000;
 }
@@ -227,6 +232,34 @@ button {
 
 .settingItem select {
   width: 180px;
+}
+
+.settingItem span {
+  width: 35px;
+}
+
+.minusButton,
+.plusButton {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.minusButton {
+  background: #e53935;
+}
+
+.plusButton {
+  background: #43a047;
+}
+
+.minusButton:active,
+.plusButton:active {
+  transform: scale(0.9);
 }
 
 /* 設定保存 */
