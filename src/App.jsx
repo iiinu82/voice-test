@@ -36,14 +36,20 @@ function App() {
   // =========================
 
   const [randomNumber, setRandomNumber] = useState(null);
+  // 回数
   const [count, setCount] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-
+  // カウントダウン表示
+  const [countdown, setCountdown] = useState(null);
+  // 秒読み
+  const [hasCountdown, setHasCountdown] = useState(true);
+  // 設定モーダル開閉
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const intervalRef = useRef(null);
   const timerRef = useRef(null);
+  const previousNumber = useRef(null);
 
   const totalCells = rows * columns;
 
@@ -65,11 +71,12 @@ function App() {
   // =========================
 
   const createRandomNumber = () => {
-    let number;
+    let number = Math.floor(Math.random() * (totalCells - 1)) + 1;
+    if (number >= previousNumber.current) {
+      number++;
+    }
 
-    do {
-      number = Math.floor(Math.random() * totalCells) + 1;
-    } while (number === randomNumber);
+    previousNumber.current = number;
 
     setRandomNumber(number);
   };
@@ -78,23 +85,20 @@ function App() {
   // スタート
   // =========================
 
-  const startGame = () => {
-    if (isRunning) return;
-
+  const startGameNow = () => {
+    setCountdown(null);
     setCount(0);
     setElapsedTime(0);
     setRandomNumber(null);
+    previousNumber.current = null;
     setIsRunning(true);
 
-    // 最初の○を表示
     createRandomNumber();
 
-    // ○を表示する間隔
     intervalRef.current = setInterval(() => {
       setCount((prev) => {
         const nextCount = prev + 1;
 
-        // 回数モード
         if (mode === "count" && nextCount >= targetCount) {
           clearInterval(intervalRef.current);
           setIsRunning(false);
@@ -106,7 +110,6 @@ function App() {
       createRandomNumber();
     }, intervalTime * 1000);
 
-    // タイマーモード
     if (mode === "timer") {
       timerRef.current = setInterval(() => {
         setElapsedTime((prev) => {
@@ -122,6 +125,34 @@ function App() {
         });
       }, 1000);
     }
+  };
+
+  const startGame = () => {
+    if (isRunning || countdown !== null) return;
+
+    // 秒読み無し
+    if (!setHasCountdown) {
+      startGameNow();
+      return;
+    }
+
+    setCountdown("READY");
+
+    setTimeout(() => {
+      setCountdown(3);
+
+      setTimeout(() => {
+        setCountdown(2);
+
+        setTimeout(() => {
+          setCountdown(1);
+
+          setTimeout(() => {
+            startGameNow();
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
   };
 
   // =========================
@@ -181,6 +212,15 @@ function App() {
                   <option value="count">回数モード</option>
                   <option value="timer">タイマーモード</option>
                 </select>
+              </div>
+              {/* 秒読み */}
+              <div className="settingItem">
+                <label>秒読み</label>
+                <input
+                  type="checkbox"
+                  checked={setHasCountdown}
+                  onChange={(e) => setHasCountdown(e.target.checked)}
+                />{" "}
               </div>
 
               {/* 回数 */}
@@ -358,7 +398,11 @@ function App() {
           </span>
         )}
 
-        {mode === "timer" && <span>{elapsedTime} 秒</span>}
+        {mode === "timer" && (
+          <span>
+            {elapsedTime} / {targetTime}秒
+          </span>
+        )}
       </div>
 
       {/* =========================
@@ -368,13 +412,14 @@ function App() {
       <div className="buttons">
         {!isRunning ? (
           <button className="startButton" onClick={startGame}>
-            START
+            {countdown !== null ? countdown : "START"}
           </button>
         ) : (
           <button className="stopButton" onClick={stopGame}>
             STOP
           </button>
         )}
+
         {/* 歯車ボタン */}
         <button
           className="settingsButton"
