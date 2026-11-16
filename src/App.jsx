@@ -65,7 +65,12 @@ function App() {
   // =========================
 
   const createRandomNumber = () => {
-    const number = Math.floor(Math.random() * totalCells) + 1;
+    let number;
+
+    do {
+      number = Math.floor(Math.random() * totalCells) + 1;
+    } while (number === randomNumber);
+
     setRandomNumber(number);
   };
 
