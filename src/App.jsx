@@ -56,6 +56,7 @@ function App() {
 
   const totalCells = rows * columns;
   const commandProcessed = useRef(false);
+  const startGameRef = useRef(null);
 
   // =========================
   // 設定を保存
@@ -168,6 +169,11 @@ function App() {
     }, 1000);
   };
 
+  // 音声認識を有効にしていても設定を変えると反映される（スマホのバグ修正）
+  useEffect(() => {
+    startGameRef.current = startGame;
+  }, [startGame]);
+
   // =========================
   // ストップ
   // =========================
@@ -221,8 +227,7 @@ function App() {
 
       if (!commandProcessed.current) {
         if (text.includes("スタート")) {
-          startGame();
-
+          startGameRef.current();
           commandProcessed.current = true;
         }
       }
