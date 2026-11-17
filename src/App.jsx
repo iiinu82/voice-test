@@ -38,7 +38,7 @@ function App() {
   // =========================
   // ゲームの状態
   // =========================
-
+  const [result, setResult] = useState("");
   const [randomNumber, setRandomNumber] = useState(null);
   // 回数
   const [count, setCount] = useState(0);
@@ -55,6 +55,76 @@ function App() {
   const previousNumber = useRef(null);
 
   const totalCells = rows * columns;
+  const commandProcessed = useRef(false);
+
+  // =========================
+  // 音声認識
+  // =========================
+
+  // 音声認識中かどうか
+  const [isListening, setIsListening] = useState(false);
+
+  const recognitionRef = useRef(null);
+  const startRecognition = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("このブラウザは音声認識に対応していません");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "ja-JP";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      const text = event.results[event.results.length - 1][0].transcript;
+
+      setResult(text);
+
+      if (!commandProcessed.current) {
+        if (text.includes("スタート")) {
+          startGame();
+
+          commandProcessed.current = true;
+        }
+      }
+
+      if (!commandProcessed.current) {
+        if (text.includes("ストップ")) {
+          stopGame();
+
+          commandProcessed.current = true;
+        }
+      }
+
+      if (event.results[event.results.length - 1].isFinal) {
+        commandProcessed.current = false;
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+
+    recognition.start();
+
+    setIsListening(true);
+  };
+
+  const stopRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+
+    setIsListening(false);
+  };
 
   // =========================
   // 設定を保存
@@ -391,7 +461,11 @@ function App() {
             {/* 設定保存 */}
             <button
               className="saveButton"
-              onClick={() => setIsSettingsOpen(false)}
+              onClick={() => {
+                setCount(0);
+                setElapsedTime(0);
+                setIsSettingsOpen(false);
+              }}
             >
               設定を保存する
             </button>
@@ -404,6 +478,7 @@ function App() {
       ========================= */}
 
       <div className="status">
+        <h2 style={{ height: "20px" }}>{result}</h2>
         {mode === "count" && (
           <span>
             {count} / {targetCount} 回
@@ -422,6 +497,19 @@ function App() {
       ========================= */}
 
       <div className="buttons">
+        {/* 音声認識ボタン */}
+        <button
+          className="soundStartButton"
+          onClick={isListening ? stopRecognition : startRecognition}
+          disabled={isRunning}
+        >
+          {isListening ? (
+            <i className="fa-solid fa-microphone"></i>
+          ) : (
+            <i className="fa-solid fa-microphone-slash"></i>
+          )}
+        </button>
+
         {!isRunning ? (
           <button className="startButton" onClick={startGame}>
             {countdown !== null ? countdown : "START"}
