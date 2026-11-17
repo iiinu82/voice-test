@@ -12,7 +12,7 @@ function App() {
   });
 
   const [hasCountdown, setHasCountdown] = useState(() => {
-    return localStorage.getItem("hasCountdown") || "true";
+    return localStorage.getItem("hasCountdown") === "true";
   });
 
   const [targetCount, setTargetCount] = useState(() => {
