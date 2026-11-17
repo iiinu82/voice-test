@@ -58,75 +58,6 @@ function App() {
   const commandProcessed = useRef(false);
 
   // =========================
-  // 音声認識
-  // =========================
-
-  // 音声認識中かどうか
-  const [isListening, setIsListening] = useState(false);
-
-  const recognitionRef = useRef(null);
-  const startRecognition = () => {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert("このブラウザは音声認識に対応していません");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = "ja-JP";
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onresult = (event) => {
-      const text = event.results[event.results.length - 1][0].transcript;
-
-      setResult(text);
-
-      if (!commandProcessed.current) {
-        if (text.includes("スタート")) {
-          startGame();
-
-          commandProcessed.current = true;
-        }
-      }
-
-      if (!commandProcessed.current) {
-        if (text.includes("ストップ")) {
-          stopGame();
-
-          commandProcessed.current = true;
-        }
-      }
-
-      if (event.results[event.results.length - 1].isFinal) {
-        commandProcessed.current = false;
-      }
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognitionRef.current = recognition;
-
-    recognition.start();
-
-    setIsListening(true);
-  };
-
-  const stopRecognition = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      recognitionRef.current = null;
-    }
-
-    setIsListening(false);
-  };
-
-  // =========================
   // 設定を保存
   // =========================
 
@@ -259,6 +190,75 @@ function App() {
       clearInterval(timerRef.current);
     };
   }, []);
+
+  // =========================
+  // 音声認識
+  // =========================
+
+  // 音声認識中かどうか
+  const [isListening, setIsListening] = useState(false);
+
+  const recognitionRef = useRef(null);
+  const startRecognition = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("このブラウザは音声認識に対応していません");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "ja-JP";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      const text = event.results[event.results.length - 1][0].transcript;
+
+      setResult(text);
+
+      if (!commandProcessed.current) {
+        if (text.includes("スタート")) {
+          startGame();
+
+          commandProcessed.current = true;
+        }
+      }
+
+      if (!commandProcessed.current) {
+        if (text.includes("ストップ")) {
+          stopGame();
+
+          commandProcessed.current = true;
+        }
+      }
+
+      if (event.results[event.results.length - 1].isFinal) {
+        commandProcessed.current = false;
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+
+    recognition.start();
+
+    setIsListening(true);
+  };
+
+  const stopRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+
+    setIsListening(false);
+  };
 
   return (
     <div className="app">
