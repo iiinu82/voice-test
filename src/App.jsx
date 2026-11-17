@@ -84,7 +84,7 @@ function App() {
   // ランダムなマスを作る
   // =========================
 
-  const createRandomNumber = () => {
+  const createRandomNumber = useCallback(() => {
     let number = Math.floor(Math.random() * (totalCells - 1)) + 1;
     if (number >= previousNumber.current) {
       number++;
@@ -93,7 +93,7 @@ function App() {
     previousNumber.current = number;
 
     setRandomNumber(number);
-  };
+  }, [totalCells]);
 
   // =========================
   // スタート
@@ -139,7 +139,7 @@ function App() {
         });
       }, 1000);
     }
-  }, [mode, targetCount, targetTime, intervalTime, totalCells]);
+  }, [mode, targetCount, targetTime, intervalTime, createRandomNumber]);
 
   const startGame = useCallback(() => {
     if (isRunning || countdown !== null) return;
