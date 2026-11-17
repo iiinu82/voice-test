@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import "./App.css";
 import logo from "/logo.png";
 
@@ -99,7 +99,7 @@ function App() {
   // スタート
   // =========================
 
-  const startGameNow = () => {
+  const startGameNow = useCallback(() => {
     setCountdown(null);
     setCount(0);
     setElapsedTime(0);
@@ -139,9 +139,9 @@ function App() {
         });
       }, 1000);
     }
-  };
+  }, [mode, targetCount, targetTime, intervalTime, totalCells]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     if (isRunning || countdown !== null) return;
 
     // 秒読み無し
@@ -167,7 +167,7 @@ function App() {
         }, 1000);
       }, 1000);
     }, 1000);
-  };
+  }, [isRunning, countdown, hasCountdown, startGameNow]);
 
   // 音声認識を有効にしていても設定を変えると反映される（スマホのバグ修正）
   useEffect(() => {
